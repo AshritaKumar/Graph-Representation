@@ -75,16 +75,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const network = new vis.Network(container, data, options);
 
-    // Add click event listener
     network.on("click", function (params) {
         if (params.nodes.length > 0) {
-            const nodeId = params.nodes[0]; // Get the clicked node ID
-            const clickedNode = nodes.get(nodeId); // Retrieve the clicked node data
+            const nodeId = params.nodes[0]; 
+            const clickedNode = nodes.get(nodeId); 
 
-            // Display node details in the console (or update UI)
             console.log(`Clicked on Node: ${clickedNode.label}`);
 
-            // Example: Show details in a popup
+
             alert(`Node ID: ${nodeId}\nLabel: ${clickedNode.label}`);
         }
     });
