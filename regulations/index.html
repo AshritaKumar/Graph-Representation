@@ -1,13 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Graph Visualization</title>
-  <script type="text/javascript" src="https://unpkg.com/vis-network@9.0.0/dist/vis-network.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7-Level Dependency Graph</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.css" rel="stylesheet">
+    <style>
+        #graph-container {
+            width: 100%;
+            height: 900px;
+            border: 1px solid lightgray;
+        }
+    </style>
 </head>
 <body>
-  <div id="graph-container" style="width: 100%; height: 600px;"></div>
-  <script src="graph.js"></script>
+    <div id="graph-container"></div>
+    <div id="level-check" style="margin-top: 20px; font-family: Arial, sans-serif;"></div>
+    <script>
+        const nodes = new vis.DataSet([
+            { id: "Main", label: "Advertisements of Life Insurance and Annuities Model Regulation", color: "#7ec8f7", level: 1 },
+            
+            { id: "Life Insurance Illustrations Model Regulation", label: "Life Insurance Illustrations Model Regulation", color: "#78d89a", level: 2 },
+            { id: "Annuity Disclosure Model Regulation", label: "Annuity Disclosure Model Regulation", color: "#78d89a", level: 2 },
+            { id: "Federal Regulations (Variable Products)", label: "Federal Regulations (Variable Products)", color: "#78d89a", level: 2 },
+            { id: "State Laws on Cost Comparison Indices", label: "State Laws on Cost Comparison Indices", color: "#78d89a", level: 2 },
+            { id: "Gramm-Leach-Bliley Act", label: "Gramm-Leach-Bliley Act", color: "#78d89a", level: 2 },
+            
+            { id: "State Life Insurance Regulations", label: "State Life Insurance Regulations", color: "#f5a7a7", level: 3 },
+            { id: "NAIC Annuity Guidelines", label: "NAIC Annuity Guidelines", color: "#f5a7a7", level: 3 },
+            { id: "Securities Act of 1933", label: "Securities Act of 1933", color: "#f5a7a7", level: 3 },
+            { id: "State Consumer Insurance Laws", label: "State Consumer Insurance Laws", color: "#f5a7a7", level: 3 },
+            { id: "Federal Consumer Privacy Protections", label: "Federal Consumer Privacy Protections", color: "#f5a7a7", level: 3 },
+            
+            { id: "State Insurance Compliance Rules", label: "State Insurance Compliance Rules", color: "#d3a8f9", level: 4 },
+            { id: "Equity Indexed Annuities Disclosures", label: "Equity Indexed Annuities Disclosures", color: "#d3a8f9", level: 4 },
+            { id: "SEC Investment Guidelines", label: "SEC Investment Guidelines", color: "#d3a8f9", level: 4 },
+            { id: "Consumer Protection Standards", label: "Consumer Protection Standards", color: "#d3a8f9", level: 4 },
+            { id: "Data Protection Standards", label: "Data Protection Standards", color: "#d3a8f9", level: 4 },
+
+            { id: "Insurance Licensing Standards", label: "Insurance Licensing Standards", color: "#b0b9c7", level: 5 },
+            { id: "Public Investment Compliance", label: "Public Investment Compliance", color: "#b0b9c7", level: 5 },
+            { id: "Federal Consumer Finance Laws", label: "Federal Consumer Finance Laws", color: "#b0b9c7", level: 5 },
+            { id: "Cross-Border Data Sharing Laws", label: "Cross-Border Data Sharing Laws", color: "#b0b9c7", level: 5 },
+            
+            { id: "NAIC Recommended Practices", label: "NAIC Recommended Practices", color: "#f9d77e", level: 6 },
+            { id: "Global Consumer Advocacy Guidelines", label: "Global Consumer Advocacy Guidelines", color: "#f9d77e", level: 6 },
+            { id: "Financial Institutions Best Practices", label: "Financial Institutions Best Practices", color: "#f9d77e", level: 6 },            
+            { id: "Regional Insurance Governing Bodies", label: "Regional Insurance Governing Bodies", color: "#f9d77e", level: 6 },
+
+            { id: "International Financial Regulatory Agreements", label: "International Financial Regulatory Agreements", color: "#a9e0f7", level: 7 },
+            { id: "Global Trade and Financial Data Treaties", label: "Global Trade and Financial Data Treaties", color: "#a9e0f7", level: 7 },
+            { id: "Cross-Jurisdictional Compliance Treaties", label: "Cross-Jurisdictional Compliance Treaties", color: "#a9e0f7", level: 7 },
+            { id: "Worldwide Consumer Protection Accords", label: "Worldwide Consumer Protection Accords", color: "#a9e0f7", level: 7 }
+        ]);
+
+        const edges = new vis.DataSet([
+        { from: "Main", to: "Life Insurance Illustrations Model Regulation", arrows: "to,from" },
+        { from: "Main", to: "Annuity Disclosure Model Regulation", arrows: "to" },
+        { from: "Main", to: "Federal Regulations (Variable Products)", arrows: "to" },
+        { from: "Main", to: "State Laws on Cost Comparison Indices", arrows: "to,from" },
+        { from: "Main", to: "Gramm-Leach-Bliley Act", arrows: "to" },
+        { from: "Life Insurance Illustrations Model Regulation", to: "State Life Insurance Regulations", arrows: "to,from" },
+        { from: "Annuity Disclosure Model Regulation", to: "NAIC Annuity Guidelines", arrows: "to,from" },
+        { from: "Federal Regulations (Variable Products)", to: "Securities Act of 1933", arrows: "to" },
+        { from: "State Laws on Cost Comparison Indices", to: "State Consumer Insurance Laws", arrows: "to,from" },
+        { from: "Gramm-Leach-Bliley Act", to: "Federal Consumer Privacy Protections", arrows: "to" },
+        { from: "State Life Insurance Regulations", to: "State Insurance Compliance Rules", arrows: "to" },
+        { from: "NAIC Annuity Guidelines", to: "Equity Indexed Annuities Disclosures", arrows: "to,from" },
+        { from: "Securities Act of 1933", to: "SEC Investment Guidelines", arrows: "to" },
+        { from: "State Consumer Insurance Laws", to: "Consumer Protection Standards", arrows: "to" },
+        { from: "Federal Consumer Privacy Protections", to: "Data Protection Standards", arrows: "to" },
+        { from: "State Insurance Compliance Rules", to: "Insurance Licensing Standards", arrows: "to" },
+        { from: "Equity Indexed Annuities Disclosures", to: "Consumer Protection Standards", arrows: "to,from" },
+        { from: "SEC Investment Guidelines", to: "Public Investment Compliance", arrows: "to" },
+        { from: "Consumer Protection Standards", to: "Federal Consumer Finance Laws", arrows: "to" },
+        { from: "Data Protection Standards", to: "Cross-Border Data Sharing Laws", arrows: "to" },
+        { from: "Insurance Licensing Standards", to: "NAIC Recommended Practices", arrows: "to,from" },
+        { from: "Public Investment Compliance", to: "Financial Institutions Best Practices", arrows: "to" },
+        { from: "Federal Consumer Finance Laws", to: "Global Consumer Advocacy Guidelines", arrows: "to" },
+        { from: "Cross-Border Data Sharing Laws", to: "Regional Insurance Governing Bodies", arrows: "to" },
+        { from: "NAIC Recommended Practices", to: "International Financial Regulatory Agreements", arrows: "to,from" },
+        { from: "Financial Institutions Best Practices", to: "Global Trade and Financial Data Treaties", arrows: "to" },
+        { from: "Global Consumer Advocacy Guidelines", to: "Cross-Jurisdictional Compliance Treaties", arrows: "to" },
+        { from: "Regional Insurance Governing Bodies", to: "Worldwide Consumer Protection Accords", arrows: "to" },
+        { from: "Insurance Licensing Standards", to: "Interstate Regulatory Frameworks", arrows: "to,from" }, // Bidirectional
+    ]);
+    
+
+
+        const container = document.getElementById("graph-container");
+        const data = { nodes: nodes, edges: edges };
+        const options = {
+            physics: {
+                enabled: true,
+                solver: "forceAtlas2Based",
+                forceAtlas2Based: {
+                    gravitationalConstant: -200,
+                    centralGravity: 0.01,
+                    springLength: 150,
+                    springConstant: 0.05,
+                    damping: 0.4
+                }
+            },
+            nodes: {
+                shape: "box",
+                font: { size: 14 },
+                size: 20
+            },
+            edges: {
+                arrows: "to",
+                smooth: { type: "continuous" }
+            }
+        };
+
+        const network = new vis.Network(container, data, options);
+
+        const levels = [...new Set(nodes.map(node => node.level))];
+        const levelCheckDiv = document.getElementById("level-check");
+        if (levels.length === 7) {
+            levelCheckDiv.innerHTML = "<strong>All 7 levels are properly populated.</strong>";
+            levelCheckDiv.style.color = "green";
+        } else {
+            levelCheckDiv.innerHTML = `<strong>Level mismatch detected. Found ${levels.length} levels.</strong>`;
+            levelCheckDiv.style.color = "red";
+        }
+
+        network.on("click", function (params) {
+            if (params.nodes.length > 0) {
+                const nodeId = params.nodes[0];
+                const clickedNode = nodes.get(nodeId);
+
+                alert(`Node ID: ${nodeId}\nLabel: ${clickedNode.label}\nLevel: ${clickedNode.level}`);
+            }
+        });
+    </script>
 </body>
 </html>
